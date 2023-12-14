@@ -9,6 +9,7 @@ Link format must not be WikiLinks.
 3. Links to notes - Converts the name of the note(While removing starting indicators - Example: "123. Hello" will be changed into "Hello", The rationale behind it is that many notes start with a number indicator while headers are less likely to start with this indicator.) to a heading. For this type of link to work properly you should have a heading with the same name as the note(Without starting indicators) inside the note).
 
 ## Important commands:
+
 ### Command to run the plugin
 pandoc --reference-doc=template.docx -o fileName.docx --lua-filter=Link_Convertor_md_to_docx_pandoc_plugin.lua *.md
 

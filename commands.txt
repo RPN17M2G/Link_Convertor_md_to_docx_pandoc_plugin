@@ -1,0 +1,5 @@
+#Command to run the plugin
+pandoc --reference-doc=template.docx -o fileName.docx --lua-filter=Link_Convertor_md_to_docx_pandoc_plugin.lua *.md
+
+#Command to create default template.docx for styling the headers(Used after some bugs in the header convertion between markdown and docx)
+pandoc -o template.docx --print-default-data-file reference.docx

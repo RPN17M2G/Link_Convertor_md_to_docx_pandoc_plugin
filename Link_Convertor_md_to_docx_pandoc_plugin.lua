@@ -10,8 +10,8 @@ function Link(el)
     does_have_md = stripped_target ~= stripped_target:gsub(".md", "")
 
     if does_have_md == false then
-      print("Error: Link does not contain #(Link to heading) or .md(Link to note). Link: "..stripped_target)
-      return pandoc.Link(stripped_target, stripped_target)
+      print("Warning: Link does not contain #(Link to heading) or .md(Link to note). Link: "..stripped_target)
+      return el -- Return the original link
     end
 
     stripped_target =  stripped_target:gsub(".md", "") -- Remove .md from string

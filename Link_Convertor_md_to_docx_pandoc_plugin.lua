@@ -11,7 +11,7 @@ function Link(el)
 
     if does_have_md == false then
       print("Warning: Link does not contain #(Link to heading) or .md(Link to note). Link: "..stripped_target)
-      return el -- Return the original link
+      return el
     end
 
     stripped_target =  stripped_target:gsub(".md", "") -- Remove .md from string
@@ -25,10 +25,18 @@ function Link(el)
   target_id = stripped_target:gsub(" ", "-"):lower() --The id of heading is in the format of: "word-word" in lowercase
   --That way I don't link the link to itself of any other element that has the content of the header
 
-  hyperlink = pandoc.Link(stripped_target, target_id)
+  hyperlink = pandoc.Link(stripped_target:gsub("#", ""), target_id)
 
   return hyperlink
 
+end
+
+function Image(img)
+  -- Remove image caption - pandoc does not deal well with image's text in the format of ![altText|sizeOfImage](Link)
+  -- Pandoc shows the alternative text and the image size as text in an unexpected positions(like the bottom left corner)
+  -- even when the image is visibale.
+  img.caption = ""
+  return img
 end
 
 

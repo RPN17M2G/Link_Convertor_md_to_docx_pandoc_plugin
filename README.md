@@ -15,7 +15,7 @@ Link format must not be WikiLinks.
    Example: \[differentFile](differentFile.md)
 
 ### Image's caption remover:
-  Remove image caption - pandoc does not deal well with image's text in the format of \![altText|sizeOfImage](Link)
+  Remove image caption - pandoc does not deal well with image's text in the format of \![altText|sizeOfImage]\(Link)
   Pandoc shows the alternative text and the image size as text in an unexpected positions(like the bottom left corner)
   even when the image is visibale.
 

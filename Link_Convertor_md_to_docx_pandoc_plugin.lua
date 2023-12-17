@@ -22,7 +22,9 @@ function Link(el)
     stripped_target = "#"..stripped_target
   end
 
-  target_id = stripped_target:gsub(" ", "-"):lower() --The id of heading is in the format of: "word-word" in lowercase
+  target_id = stripped_target:gsub(" & ", " ") -- Special case of which & is wrapped with spaces
+  target_id = target_id:gsub("[%(%)%[%]&]", "") -- Docx bookmarks do not work with & or with paranthesis
+  target_id = target_id:gsub(" ", "-"):lower() --The id of heading is in the format of: "word-word" in lowercase
   --That way I don't link the link to itself of any other element that has the content of the header
 
   hyperlink = pandoc.Link(stripped_target:gsub("#", ""), target_id)

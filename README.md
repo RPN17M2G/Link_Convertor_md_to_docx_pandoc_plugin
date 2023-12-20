@@ -1,8 +1,6 @@
 # Link_Convertor_md_to_docx_pandoc_plugin
 A Lua Filter to use for pandoc in order to convert internal and external links from multiplie markdown files to heading links that will work on the docx format.
 
-Link format must not be WikiLinks.
-
 ## This plugin knows how to deal with:
 1. Regular header's links - Link to a header in the same note.
 
@@ -13,6 +11,24 @@ Link format must not be WikiLinks.
 3. Links to notes - Converts the name of the note(While removing starting indicators - Example: "123. Hello" will be changed into "Hello", The rationale behind it is that many notes start with a number indicator while headers are less likely to start with this indicator.) to a heading. For this type of link to work properly you should have a heading with the same name as the note(Without starting indicators) inside the note).
 
    Example: \[differentFile](differentFile.md)
+
+#### Wikilinks support:
+
+4. Links without alternative text: Converts note name to a link to heading in the same name.
+
+   Example: \[[noteName]]
+
+5. Links with alternative text: Converts the target to a target id type and shows the alternative text instead of the target.
+
+   Example: \[[target|alternative_text]]
+
+6. Links to different note's heading: Link to a header that is in a different note.
+
+   Example: \[[noteName\#headerName]]
+
+6. Links to different note's heading with an alternative text: Link to a header that is in a different note. Converts the target to a target id type and shows the alternative text instead of the target.
+
+   Example: \[[noteName\#headerName|alternative_text]]
 
 ### Image's caption remover:
   Remove image caption - pandoc does not deal well with image's text in the format of \![altText|sizeOfImage]\(Link)

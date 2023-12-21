@@ -26,9 +26,17 @@ A Lua Filter to use for pandoc in order to convert internal and external links f
 
    Example: \[[noteName\#headerName]]
 
-6. Links to different note's heading with an alternative text: Link to a header that is in a different note. Converts the target to a target id type and shows the alternative text instead of the target.
+7. Links to different note's heading with an alternative text: Link to a header that is in a different note. Converts the target to a target id type and shows the alternative text instead of the target.
 
    Example: \[[noteName\#headerName|alternative_text]]
+
+8. Links to images: Link to an image, must start with 2 '!' because the lua function Str removes the first one and the '!' is the indicator for the type of link in the code.
+
+   Example: \!![[image.jpg]]
+
+9. Links to images with alternative text: Link to an image, must start with 2 '!' because the lua function Str removes the first one and the '!' is the indicator for the type of link in the code.
+
+   Example: \[[image.jpg|alternative text]]
 
 ### Image's caption remover:
   Remove image caption - pandoc does not deal well with image's text in the format of \![altText|sizeOfImage]\(Link)

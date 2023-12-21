@@ -71,6 +71,7 @@ end
 
 local link = ""
 local isInLink = false
+local isImage = false
 
 function Str (el)
   -- Support for wikilinks
@@ -80,8 +81,10 @@ function Str (el)
   local firstPart
   local secondPart
   local doesHave
+  local isImageCopy = isImage
 
   if string.find(elStr ,"%[%[") ~= nil and string.find(elStr ,"%]%]") ~= nil then -- 1 word wikilink
+    isImageCopy = string.sub(elStr,1,1)=='!' -- Find if the string starts with "!"
     link =  elStr:gsub("%[%[", ""):gsub("%]%]", "") -- Mark as link
 
     -- Cut the wikilink to the target and the content(If there is only target it will return the original text
@@ -92,15 +95,22 @@ function Str (el)
     firstPart = firstPart:gsub("|", ""):gsub("%%20", " "):gsub("#", "")
     secondPart = secondPart:gsub("|", "")
 
-    return pandoc.Link(secondPart, "#"..parseTargetId(firstPart)) -- Convert target to target_id
+    if isImageCopy then
+      return pandoc.Image(secondPart, firstPart:gsub("!", "")) -- Return image
+    else
+      return pandoc.Link(secondPart, "#"..parseTargetId(firstPart)) -- Convert target to target_id
+    end
 
   elseif string.find(elStr ,"%[%[") ~= nil then -- Starting a link that is longer than 1 word
+
+    isImage = string.sub(elStr,1,1)=='!' -- Find if the string starts with "!"
     isInLink = true -- Mark start of link
     link = elStr:gsub("%[%[", "") -- Mark as link
 
   elseif string.find(elStr ,"%]%]") ~= nil then -- End of link
     link = link .. " " .. elStr:gsub("%]%]", "")
     isInLink = false
+    isImage = false
 
     -- Cut the wikilink to the target and the content(If there is only target it will return the original text
     -- which means that the content and the target will be the same)
@@ -110,7 +120,11 @@ function Str (el)
     firstPart = firstPart:gsub("|", ""):gsub("%%20", " ")
     secondPart = secondPart:gsub("|", "")
 
-    return pandoc.Link(secondPart, "#"..parseTargetId(firstPart)) -- Convert target to target_id
+    if isImageCopy then
+      return pandoc.Image(secondPart, firstPart:gsub("!", "")) -- Return image
+    else
+      return pandoc.Link(secondPart, "#"..parseTargetId(firstPart)) -- Convert target to target_id
+    end
 
   elseif isInLink then -- Middle of a link
     link = link .. " " .. elStr
@@ -120,3 +134,4 @@ function Str (el)
     return "" -- Delete link's text
   end
 end
+

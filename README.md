@@ -36,7 +36,7 @@ A Lua Filter to use for pandoc in order to convert internal and external links f
 
 9. Links to images with alternative text: Link to an image, must start with 2 '!' because the lua function Str removes the first one and the '!' is the indicator for the type of link in the code.
 
-   Example: \[[image.jpg|alternative text]]
+   Example: \!![[image.jpg|alternative text]]
 
 ### Image's caption remover:
   Remove image caption - pandoc does not deal well with image's text in the format of \![altText|sizeOfImage]\(Link)

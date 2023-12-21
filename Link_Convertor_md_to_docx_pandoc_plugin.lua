@@ -1,3 +1,7 @@
+local link = ""
+local isInLink = false
+local isImage = false
+
 function Link(el)
   local stripped_target = el.target:gsub("%%20", " ") -- Format spaces
   local does_have_md = false
@@ -69,37 +73,40 @@ function cutPartBySep (inputstr, seperator, firstPart)
   return i > 1 or inputstr:sub(1, #seperator) == seperator, result -- Return the result and if the string has hashtag
 end
 
-local link = ""
-local isInLink = false
-local isImage = false
+function cutAndParseLink(isImageCopy, link)
+  -- Cut link parts and parse link type. Return the final link
+  local firstPart
+  local secondPart
+  local doesHave
+
+  -- Cut the wikilink to the target and the content(If there is only target it will return the original text
+  -- which means that the content and the target will be the same)
+  doesHave, secondPart = cutPartBySep(link, '|', false)
+  doesHave, firstPart = cutPartBySep(link, '|', true)
+  doesHave, firstPart = cutPartBySep(firstPart, "#", false) -- Remove file name
+  firstPart = firstPart:gsub("|", ""):gsub("%%20", " "):gsub("#", "")
+  secondPart = secondPart:gsub("|", "")
+
+  if isImageCopy then
+    return pandoc.Image(secondPart, firstPart:gsub("!", "")) -- Return image
+  else
+    return pandoc.Link(secondPart, "#"..parseTargetId(firstPart)) -- Convert target to target_id
+  end
+end
 
 function Str (el)
   -- Support for wikilinks
   -- Can support wikilinks that are in the format of: [[target|text_to_show]] or [[target_and_text_to_show]]
 
   local elStr = tostring(el):gsub('"', ""):gsub("Str ", "") -- Convert string to a string type
-  local firstPart
-  local secondPart
-  local doesHave
+
   local isImageCopy = isImage
 
   if string.find(elStr ,"%[%[") ~= nil and string.find(elStr ,"%]%]") ~= nil then -- 1 word wikilink
     isImageCopy = string.sub(elStr,1,1)=='!' -- Find if the string starts with "!"
     link =  elStr:gsub("%[%[", ""):gsub("%]%]", "") -- Mark as link
 
-    -- Cut the wikilink to the target and the content(If there is only target it will return the original text
-    -- which means that the content and the target will be the same)
-    doesHave, secondPart = cutPartBySep(link, '|', false)
-    doesHave, firstPart = cutPartBySep(link, '|', true)
-    doesHave, firstPart = cutPartBySep(firstPart, "#", false) -- Remove file name
-    firstPart = firstPart:gsub("|", ""):gsub("%%20", " "):gsub("#", "")
-    secondPart = secondPart:gsub("|", "")
-
-    if isImageCopy then
-      return pandoc.Image(secondPart, firstPart:gsub("!", "")) -- Return image
-    else
-      return pandoc.Link(secondPart, "#"..parseTargetId(firstPart)) -- Convert target to target_id
-    end
+    return cutAndParseLink(isImageCopy, link)
 
   elseif string.find(elStr ,"%[%[") ~= nil then -- Starting a link that is longer than 1 word
 
@@ -112,19 +119,7 @@ function Str (el)
     isInLink = false
     isImage = false
 
-    -- Cut the wikilink to the target and the content(If there is only target it will return the original text
-    -- which means that the content and the target will be the same)
-    doesHave, secondPart = cutPartBySep(link, '|', false)
-    doesHave, firstPart = cutPartBySep(link, '|', true)
-    doesHave, firstPart = cutPartBySep(firstPart, "#", false) -- Remove file name
-    firstPart = firstPart:gsub("|", ""):gsub("%%20", " ")
-    secondPart = secondPart:gsub("|", "")
-
-    if isImageCopy then
-      return pandoc.Image(secondPart, firstPart:gsub("!", "")) -- Return image
-    else
-      return pandoc.Link(secondPart, "#"..parseTargetId(firstPart)) -- Convert target to target_id
-    end
+    return cutAndParseLink(isImageCopy, link)
 
   elseif isInLink then -- Middle of a link
     link = link .. " " .. elStr
